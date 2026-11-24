@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Components
 import Intro from "./components/Intro";
@@ -54,9 +55,12 @@ function App() {
     // Écran d'introduction
     if (screen === "intro") {
         return (
-            <Intro
-                onStart={() => setScreen("story")}
-            />
+            <>
+                <Intro
+                    onStart={() => setScreen("story")}
+                />
+                <Analytics />
+            </>
         );
     }
 
@@ -72,6 +76,7 @@ function App() {
                 <InteractiveQuestion
                     onContinue={handleQuestionContinue}
                 />
+                <Analytics />
             </>
         );
     }
@@ -79,21 +84,34 @@ function App() {
     // Déclaration finale
     if (screen === "declaration") {
         return (
-            <Declaration
-                onAccept={() => setScreen("accepted")}
-                onDecline={() => setScreen("declined")}
-            />
+            <>
+                <Declaration
+                    onAccept={() => setScreen("accepted")}
+                    onDecline={() => setScreen("declined")}
+                />
+                <Analytics />
+            </>
         );
     }
 
     // Révélation de l'identité
     if (screen === "accepted") {
-        return <FinalReveal />;
+        return (
+            <>
+                <FinalReveal />
+                <Analytics />
+            </>
+        );
     }
 
     // Réponse négative
     if (screen === "declined") {
-        return <Declined />;
+        return (
+            <>
+                <Declined />
+                <Analytics />
+            </>
+        );
     }
 
     // Affichage des chapitres
@@ -111,6 +129,7 @@ function App() {
                 isFirst={currentChapter === 0}
                 isLast={currentChapter === chapters.length - 1}
             />
+            <Analytics />
         </>
     );
 }
