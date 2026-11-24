@@ -1,7 +1,12 @@
 
 import { Heart, ArrowRight } from "lucide-react";
 
-function Declaration({ onAccept, onDecline }) {
+function Declaration({
+    onAccept,
+    onDecline,
+    saving,
+    error
+}) {
     return (
         <section className="story-screen">
             <div className="story-content">
@@ -23,22 +28,35 @@ function Declaration({ onAccept, onDecline }) {
                     Accepterais-tu de faire connaissance avec moi ?
                 </p>
 
+                <p className="privacy-notice">
+                    Ton choix sera transmis à la personne
+                    qui t'a envoyé cette histoire.
+                </p>
+
                 <div className="declaration-options">
                     <button
                         className="accept-button"
                         onClick={onAccept}
+                        disabled={saving}
                     >
-                        Oui, avec plaisir
-                        <ArrowRight size={18} />
+                        {saving ? "Enregistrement..." : "Oui, avec plaisir"}
+                        {!saving && <ArrowRight size={18} />}
                     </button>
 
                     <button
                         className="decline-button"
                         onClick={onDecline}
+                        disabled={saving}
                     >
                         Je préfère ne pas donner suite
                     </button>
                 </div>
+
+                {error && (
+                    <p className="answer-feedback" role="alert">
+                        {error}
+                    </p>
+                )}
             </div>
         </section>
     );

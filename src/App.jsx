@@ -14,6 +14,9 @@ import ProgressBar from "./components/ProgressBar";
 import { chapters } from "./data/story";
 import { useStory } from "./hooks/useStory";
 
+// Services
+import { saveResponse } from "./services/responseService";
+
 // Styles
 import "./styles/global.css";
 import "./styles/intro.css";
@@ -21,6 +24,8 @@ import "./styles/story.css";
 
 function App() {
     const [screen, setScreen] = useState("intro");
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
 
     const {
         currentChapter,
@@ -30,7 +35,6 @@ function App() {
 
     const chapter = chapters[currentChapter];
 
-    // Navigation entre les chapitres
     function handleNext() {
         if (currentChapter === 1) {
             setScreen("question");
@@ -45,13 +49,39 @@ function App() {
         nextChapter();
     }
 
-    // Après la réponse à la question interactive
     function handleQuestionContinue() {
         nextChapter();
         setScreen("story");
     }
 
-    // Écran d'introduction
+    async function handleChoice(choix) {
+        if (saving) {
+            return;
+        }
+
+        setSaving(true);
+        setSaveError("");
+
+        try {
+            await saveResponse(choix);
+
+            if (choix === "accepter") {
+                setScreen("accepted");
+            } else {
+                setScreen("declined");
+            }
+        } catch (error) {
+            console.error("Erreur Supabase :", error);
+
+            setSaveError(
+                "Impossible d'enregistrer ta réponse. Vérifie ta connexion et réessaie."
+            );
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    // Introduction
     if (screen === "intro") {
         return (
             <Intro
@@ -80,8 +110,10 @@ function App() {
     if (screen === "declaration") {
         return (
             <Declaration
-                onAccept={() => setScreen("accepted")}
-                onDecline={() => setScreen("declined")}
+                onAccept={() => handleChoice("accepter")}
+                onDecline={() => handleChoice("refuser")}
+                saving={saving}
+                error={saveError}
             />
         );
     }
@@ -96,7 +128,7 @@ function App() {
         return <Declined />;
     }
 
-    // Affichage des chapitres
+    // Chapitres
     return (
         <>
             <ProgressBar

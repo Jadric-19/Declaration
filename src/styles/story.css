@@ -270,3 +270,18 @@
 .contact-button:hover {
     background: #bd2947;
 }
+
+
+.privacy-notice {
+    max-width: 420px;
+    margin: 20px auto;
+    color: #b99ca3;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.accept-button:disabled,
+.decline-button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
